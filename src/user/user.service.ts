@@ -15,19 +15,33 @@ export class UserService {
     return 'This action adds a new user';
   }
 
-  findAll() {
-    return this.userRepository.find();
+  async findAll(page, size): Promise<User[]> {
+    const skip = (page - 1) * size;
+    return this.userRepository.find({ skip, take: size });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  // example to do: http://localhost:3000/api/user?searchBy=name&searchValue=Bob&page=1&size=1
+  async searchUsersByName(
+    searchBy: string,
+    searchValue: string,
+    page: number,
+    size: number,
+  ): Promise<User[]> {
+    const skip = (page - 1) * size;
+
+    const queryBuilder = this.userRepository
+      .createQueryBuilder('user')
+      .where(`user.${searchBy} LIKE :searchValue`, {
+        searchValue: `%${searchValue}%`,
+      })
+      .orderBy('user.id')
+      .skip(skip)
+      .take(size);
+
+    return queryBuilder.getMany();
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async findUserById(id: number): Promise<User | undefined> {
+    return this.userRepository.findOne({ where: { id } });
   }
 }
