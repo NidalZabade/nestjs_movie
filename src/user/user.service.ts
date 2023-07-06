@@ -4,7 +4,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
-
+import isSupportedSearchOption from './utils/search_option';
 @Injectable()
 export class UserService {
   constructor(
@@ -15,29 +15,21 @@ export class UserService {
     return 'This action adds a new user';
   }
 
-  async findAll(page, size): Promise<User[]> {
-    const skip = (page - 1) * size;
-    return this.userRepository.find({ skip, take: size });
-  }
-
-  // example to do: http://localhost:3000/api/user?searchBy=name&searchValue=Bob&page=1&size=1
-  async searchUsersByName(
+  async findAll(
     searchBy: string,
     searchValue: string,
     page: number,
     size: number,
   ): Promise<User[]> {
-    const skip = (page - 1) * size;
-
-    const queryBuilder = this.userRepository
-      .createQueryBuilder('user')
-      .where(`user.${searchBy} LIKE :searchValue`, {
+    const queryBuilder = this.userRepository.createQueryBuilder('user');
+    queryBuilder.orderBy('user.id');
+    if (isSupportedSearchOption(searchBy)) {
+      queryBuilder.where(`user.${searchBy} LIKE :searchValue`, {
         searchValue: `%${searchValue}%`,
-      })
-      .orderBy('user.id')
-      .skip(skip)
-      .take(size);
-
+      });
+    }
+    const skip = (page - 1) * size;
+    queryBuilder.skip(skip).take(size);
     return queryBuilder.getMany();
   }
 
