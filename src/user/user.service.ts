@@ -4,7 +4,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
-
+import isSupportedSearchOption from './utils/search_option';
 @Injectable()
 export class UserService {
   constructor(
@@ -15,19 +15,25 @@ export class UserService {
     return 'This action adds a new user';
   }
 
-  findAll() {
-    return this.userRepository.find();
+  async findAll(
+    searchBy: string,
+    searchValue: string,
+    page: number,
+    size: number,
+  ): Promise<User[]> {
+    const queryBuilder = this.userRepository.createQueryBuilder('user');
+    queryBuilder.orderBy('user.id');
+    if (isSupportedSearchOption(searchBy)) {
+      queryBuilder.where(`user.${searchBy} LIKE :searchValue`, {
+        searchValue: `%${searchValue}%`,
+      });
+    }
+    const skip = (page - 1) * size;
+    queryBuilder.skip(skip).take(size);
+    return queryBuilder.getMany();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
-  }
-
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async findUserById(id: number): Promise<User | undefined> {
+    return this.userRepository.findOne({ where: { id } });
   }
 }
