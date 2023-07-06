@@ -6,8 +6,8 @@ const registerSchema = joi.object().keys({
   address: joi.string(),
   mobile: joi.string().required(),
   email: joi.string().required(),
-  username: joi.string(),
-  password: joi.string(),
+  username: joi.string().required(),
+  password: joi.string().required().min(6),
   subscribed: joi.boolean(),
   deleted_at: joi.date(),
 });

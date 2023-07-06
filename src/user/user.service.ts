@@ -1,8 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Not, Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import isSupportedSearchOption from './utils/search_option';
 import registerSchema from './schema/register_schema';
@@ -42,18 +42,26 @@ export class UserService {
 
   async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {
     const user = await this.findUserById(id);
-    if (!user) {
-      throw new Error('User not found');
+    if (!user || user.deleted_at !== null) {
+      throw new NotFoundException('User not found');
     }
     return this.userRepository.save({ ...user, ...updateUserDto });
   }
 
   async softDelete(id: number): Promise<User> {
     const user = await this.findUserById(id);
-    if (!user) {
-      throw new Error('User not found');
+    if (!user || user.deleted_at !== null) {
+      throw new NotFoundException('User not found');
     }
     return this.userRepository.save({ ...user, deleted_at: new Date() });
+  }
+
+  async restore(id: number): Promise<User> {
+    const user = await this.findUserById(id);
+    if (!user || user.deleted_at === null) {
+      throw new NotFoundException('User not found');
+    }
+    return this.userRepository.save({ ...user, deleted_at: null });
   }
 
   async findUserById(id: number): Promise<User | undefined> {

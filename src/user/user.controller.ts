@@ -51,4 +51,9 @@ export class UserController {
   deleteUser(@Param('id', ParseIntPipe) id: number) {
     return this.userService.softDelete(id);
   }
+
+  @Patch(':id/restore')
+  restoreUser(@Param('id', ParseIntPipe) id: number) {
+    return this.userService.restore(id);
+  }
 }
