@@ -42,7 +42,7 @@ export class UserService {
 
   async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {
     const user = await this.findUserById(id);
-    if (!user || user.deleted_at !== null) {
+    if (!user || user.deleted_at) {
       throw new NotFoundException('User not found');
     }
     return this.userRepository.save({ ...user, ...updateUserDto });
@@ -50,7 +50,7 @@ export class UserService {
 
   async softDelete(id: number): Promise<User> {
     const user = await this.findUserById(id);
-    if (!user || user.deleted_at !== null) {
+    if (!user || user.deleted_at) {
       throw new NotFoundException('User not found');
     }
     return this.userRepository.save({ ...user, deleted_at: new Date() });
@@ -58,7 +58,7 @@ export class UserService {
 
   async restore(id: number): Promise<User> {
     const user = await this.findUserById(id);
-    if (!user || user.deleted_at === null) {
+    if (!user || !user.deleted_at) {
       throw new NotFoundException('User not found');
     }
     return this.userRepository.save({ ...user, deleted_at: null });
