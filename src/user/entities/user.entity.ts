@@ -28,4 +28,7 @@ export class User {
 
   @Column({ nullable: true })
   deleted_at: Date;
+
+  @Column({ nullable: false })
+  role: number;
 }
