@@ -25,4 +25,7 @@ export class User {
 
   @Column()
   subscribed: boolean;
+
+  @Column({ nullable: true })
+  deleted_at: Date;
 }

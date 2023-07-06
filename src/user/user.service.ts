@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import isSupportedSearchOption from './utils/search_option';
+import registerSchema from './schema/register_schema';
 @Injectable()
 export class UserService {
   constructor(
@@ -12,7 +13,12 @@ export class UserService {
     private readonly userRepository: Repository<User>,
   ) {}
   create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
+    console.log('createUserDto', createUserDto);
+    const { error } = registerSchema.validate(createUserDto);
+    if (error) {
+      throw new Error(error.message);
+    }
+    return this.userRepository.save(createUserDto);
   }
 
   async findAll(
@@ -30,7 +36,24 @@ export class UserService {
     }
     const skip = (page - 1) * size;
     queryBuilder.skip(skip).take(size);
+    queryBuilder.andWhere('user.deleted_at IS NULL');
     return queryBuilder.getMany();
+  }
+
+  async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {
+    const user = await this.findUserById(id);
+    if (!user) {
+      throw new Error('User not found');
+    }
+    return this.userRepository.save({ ...user, ...updateUserDto });
+  }
+
+  async softDelete(id: number): Promise<User> {
+    const user = await this.findUserById(id);
+    if (!user) {
+      throw new Error('User not found');
+    }
+    return this.userRepository.save({ ...user, deleted_at: new Date() });
   }
 
   async findUserById(id: number): Promise<User | undefined> {
