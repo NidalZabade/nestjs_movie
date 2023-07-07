@@ -6,7 +6,6 @@ import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import isSupportedSearchOption from './utils/search_option';
 import registerSchema from './schema/register_schema';
-import { comparePassword, hashPassword } from 'src/login/util/hash_password';
 @Injectable()
 export class UserService {
   constructor(
