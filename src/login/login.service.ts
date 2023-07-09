@@ -22,7 +22,7 @@ export class LoginService {
     if (!isPasswordMatch) {
       throw new NotFoundException('Password not match');
     }
-    const token = generateToken({ username, role: user.role });
+    const token = generateToken({ id: user.id, username, role: user.role });
     console.log('token', token);
     return token;
   }
