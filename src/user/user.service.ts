@@ -4,7 +4,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
-import isSupportedSearchOption from './utils/search_option';
+import isSupportedSearchOption from './utils/user_search_option';
 import registerSchema from './schema/register_schema';
 @Injectable()
 export class UserService {

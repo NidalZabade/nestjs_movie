@@ -1,6 +1,7 @@
-import { Column, Entity, PrimaryColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
+import { History } from '../../history/entities/history.entity';
 
-@Entity()
+@Entity('movies')
 export class Movie {
   @PrimaryColumn()
   id: number;
@@ -25,4 +26,7 @@ export class Movie {
 
   @Column()
   deleted_at: Date;
+
+  @OneToMany(() => History, (history) => history.movie)
+  histories: History[];
 }

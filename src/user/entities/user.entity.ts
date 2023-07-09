@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
+import { History } from '../../history/entities/history.entity';
 
 @Entity('users')
 export class User {
@@ -31,4 +32,7 @@ export class User {
 
   @Column({ nullable: false })
   role: number;
+
+  @OneToMany(() => History, (history) => history.user)
+  histories: History[];
 }

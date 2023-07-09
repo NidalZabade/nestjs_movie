@@ -6,6 +6,7 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { MovieModule } from './movie/movie.module';
 import { LoginModule } from './login/login.module';
+import { HistoryModule } from './history/history.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { LoginModule } from './login/login.module';
     UserModule,
     MovieModule,
     LoginModule,
+    HistoryModule,
   ],
   controllers: [AppController],
   providers: [AppService],
