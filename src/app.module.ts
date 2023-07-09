@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
@@ -7,6 +7,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { MovieModule } from './movie/movie.module';
 import { LoginModule } from './login/login.module';
 import { HistoryModule } from './history/history.module';
+import { AuthMiddleware } from './middlewares/auth.middleware';
 
 @Module({
   imports: [
@@ -30,4 +31,9 @@ import { HistoryModule } from './history/history.module';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+  export class AppModule implements NestModule {
+    configure(consumer: MiddlewareConsumer) {
+      console.log('AppModule');
+      consumer.apply(AuthMiddleware).exclude('login').forRoutes('*');
+    }
+  }
