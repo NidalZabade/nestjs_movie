@@ -5,6 +5,7 @@ import { UserModule } from './user/user.module';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { MovieModule } from './movie/movie.module';
+import { LoginModule } from './login/login.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { MovieModule } from './movie/movie.module';
     }),
     UserModule,
     MovieModule,
+    LoginModule,
   ],
   controllers: [AppController],
   providers: [AppService],

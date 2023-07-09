@@ -17,12 +17,18 @@ export class User {
   @Column({ unique: true, nullable: false })
   email: string;
 
-  @Column()
+  @Column({ unique: true, nullable: false })
   username: string;
 
-  @Column()
+  @Column({ nullable: false })
   password: string;
 
   @Column()
   subscribed: boolean;
+
+  @Column({ nullable: true })
+  deleted_at: Date;
+
+  @Column({ nullable: false })
+  role: number;
 }
